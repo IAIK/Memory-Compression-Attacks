@@ -1,0 +1,21 @@
+[submodule "libraries/zlib"]
+	path = libraries/zlib
+	url = https://github.com/madler/zlib
+[submodule "libraries/zlib-ng"]
+	path = libraries/zlib-ng
+	url = https://github.com/zlib-ng/zlib-ng
+[submodule "libraries/zstd"]
+	path = libraries/zstd
+	url = https://github.com/facebook/zstd.git
+[submodule "libraries/lzo"]
+	path = libraries/lzo
+	url = https://github.com/nemequ/lzo.git
+[submodule "libraries/fastlz"]
+	path = libraries/fastlz
+	url = https://github.com/ariya/FastLZ.git
+[submodule "libraries/rocksdb"]
+	path = libraries/rocksdb
+	url = https://github.com/facebook/rocksdb.git
+[submodule "libraries/lz4"]
+	path = libraries/lz4
+	url = https://github.com/lz4/lz4.git

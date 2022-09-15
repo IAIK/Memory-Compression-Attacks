@@ -1,0 +1,16 @@
+Check Algorithm:
+zramctl | tail -n1 | awk '{print $2}'
+
+Change Algorithm:
+sudo swapoff /dev/zram0
+sudo zramctl -a <ALGO> -s 536870912 /dev/zram0
+sudo mkswap /dev/zram0
+sudo swapon /dev/zram0
+
+Check if Algorithm Changed:
+cat /proc/swaps 
+zramctl
+
+
+
+

@@ -1,0 +1,34 @@
+http://billauer.co.il/blog/2016/05/linux-cgroups-swap-quartus/
+
+Cgroups
+
+# Install Cgroup tools
+apt-get install cgroup-tools
+
+# Create group and add user
+sudo addgroup $USER
+sudo adduser $USER $USER
+
+# Create Cgroup:
+sudo cgcreate -a $USER:$USER -g:memory:small_mem
+# This creates the /sys/fs/cgroup/memory/small_mem/ subdirectory
+
+# indeed, the process has joined the group (as non-root):
+# cat /sys/fs/cgroup/memory/small_mem/cgroup.procs
+# 4550
+
+# Set the memory limit to  8MB
+# cat /sys/fs/cgroup/memory/small_mem/memory.limit_in_bytes
+# 18446744073709551615
+
+echo "$((8*1024*1024))" > /sys/fs/cgroup/memory/small_mem/memory.limit_in_bytes
+
+
+# Start a program
+ cgexec -g memory:small_mem ./test
+
+# OR Move a existing program (needs sudo)
+# cgclassify -g memory:small_mem 4550
+
+# Get details about processes in cgroup
+# watch cat /sys/fs/cgroup/memory/small_mem/cgroup.procs

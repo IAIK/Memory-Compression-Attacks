@@ -1,0 +1,71 @@
+https://www.techrepublic.com/article/how-to-enable-the-zram-module-for-faster-swapping-on-linux/
+
+How to enable zRAM
+The zRAM module is controlled by systemd, so there's no need for an fstab entry. And since everything is already installed out of the box, we only need to create a few files and modify one. 
+
+Open a terminal window and create a new file with the command:
+
+sudo nano /etc/modules-load.d/zram.conf
+In that file, add the word:
+
+zram
+Save and close the file. 
+
+Next, create a second new file with the command:
+
+sudo nano /etc/modprobe.d/zram.conf
+In that file, paste the line:
+
+options zram num_devices=1
+Save and close the file.
+
+Next, we need to configure the size of the zRAM partition. Create a new file with the command:
+
+sudo nano /etc/udev/rules.d/99-zram.rules
+In that file, paste the following (modifying the disksize attribute to fit your needs):
+
+KERNEL=="zram0", ATTR{disksize}="512M",TAG+="systemd"
+Save and close the file.
+
+How to disable traditional swap
+In order for zRAM to function, you're going to need to disable the traditional swap. This is handled within the fstab file. Open that file with the command:
+
+sudo nano /etc/fstab
+In that file, comment out (add a leading # character) the line starting with /swap.img.
+
+Save and close the file.
+
+How to create a systemd unit file
+In order for zRAM to run, we need to create a systemd unit file. Create this file with the command:
+
+sudo nano /etc/systemd/system/zram.service
+In that file, paste the following contents:
+
+[Unit]
+Description=Swap with zram
+After=multi-user.target
+
+[Service]
+Type=oneshot 
+RemainAfterExit=true
+ExecStartPre=/sbin/mkswap /dev/zram0
+ExecStart=/sbin/swapon /dev/zram0
+ExecStop=/sbin/swapoff /dev/zram0
+
+[Install]
+WantedBy=multi-user.target
+Save and close the file. 
+
+Enable the new unit with the command:
+
+sudo systemctl enable zram
+Reboot the machine.
+
+How to find out if zRAM is working
+Once the system reboots, log back in. From a terminal window, issue the command:
+
+cat /proc/swaps
+You should now see that /dev/zram0 is handling your swap (Figure A).
+
+Figure A
+

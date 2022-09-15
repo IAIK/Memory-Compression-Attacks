@@ -1,0 +1,63 @@
+https://www.maketecheasier.com/configure-zram-ubuntu/
+While ZRAM is a fantastic solution to trade some CPU horsepower to gain more RAM, how can you configure it to dedicate more or less RAM to ZRAM? How can you change the compression algorithm? In what scenarios are such changes worthwhile? Read on to find out how to configure ZRAM on Ubuntu.
+
+Check Your Current ZRAM State
+Most people use ZRAM on their Ubuntu, Mint, or other compatible distribution through the zram-config script. That’s because it allows you to take advantage of ZRAM in the most straightforward way possible. You can install it with the command:
+
+sudo apt install zram-config
+Configure Zram On Ubuntu Configure Zram Script
+
+ 
+Its default values set ZRAM at half your computer’s actual RAM, split into multiple partitions, one for each core of your CPU. You can check this out with:
+
+cat /proc/swaps
+Configure Zram On Ubuntu Cat Proc Swaps
+You can see a typical swap file (the “/var/cache/swap/swapfile” entry) coexisting with eight ZRAM volumes in our screenshot. My system had 8GB of RAM. If you add those ZRAM volumes together, the sum is 4GB, which is half of our RAM amount. However, depending on your workload, you may want to change that size.
+
+If you’re working with multimedia and video, those aren’t very compressible, so it’s probably best if you reduce your ZRAM’s size and increase your actual swap’s size.
+If you’re working with large databases or other types of data that are highly compressible, it’s the opposite. In such scenarios, you can increase your computer’s responsiveness by increasing ZRAM’s size.
+
+ 
+Another tweak worth looking into has to do with the compression algorithm used by ZRAM. By default, it uses LZO or LZO-RLE, which is light on the CPU. On modern CPUs, though, the newer ZSTD algorithm usually offers better compression rates, and its somewhat higher toll on the CPU isn’t felt. It’s worth using this algorithm instead of the older LZO variants if your PC is less than a decade old.
+
+You can use the zramctl command to check the algorithm currently in use by ZRAM. Type zramctl in a terminal and press Enter to see your ZRAM swaps.
+
+Configure Zram On Ubuntu Zramctl
+Zramctl should already be available on your distribution. If it’s not, since it’s part of the util-linux package, you can bring it on board with:
+
+sudo apt install util-linux
+To control how ZRAM works, though, you’ll have to tweak its main script. Let’s start by changing the amount of RAM it uses.
+
+Related: 7 Ways to Speed up Ubuntu
+
+
+ 
+Change ZRAM Size
+To change the ZRAM settings, you’ll have to edit its exec script in the bin folder. Type the following command in the terminal:
+
+sudo nano /usr/bin/init-zram-swapping
+Configure Zram On Ubuntu Nano Init Zram Swapping
+To change the amount of RAM used by ZRAM, you’ll have to edit the following line:
+
+mem=$(((totalmem / 2 / ${NRDEVICES}) * 1024 ))
+Configure Zram On Ubuntu Edit Init Zram Swapping
+This line defines how much RAM ZRAM will use based on some simple calculations:
+
+totalmem is the amount of RAM installed on your PC
+/2 divides totalmem by two, translating to “half the total amount of RAM”
+/ ${NRDEVICES} divides that number by the number of cores on your PC
+* 1024 multiplies the result of the above by 1024
+You can’t, and shouldn’t, change anything in point 1 and 3, but you can play with the values in 2 and 4 to tweak the amount of RAM used by ZRAM.
+
+By increasing / 2 to / 4, your total amount of RAM would be divided by four instead of two. Thus, ZRAM would use only one-quarter of your RAM instead of half. We’d advise against dedicating your whole RAM to ZRAM, so it is best to leave this value at / 2 or increase it if you want ZRAM to use less memory.
+Configure Zram On Ubuntu Increase Ram Use
+Similarly, by keeping / 2 but decreasing 1024 to 512, you’d achieve the same result since you’d be halving the available RAM for each device. If you’d like to have ZRAM use more RAM, you could increase this value to 1536 instead.
+
+ 
+Change ZRAM Compression Algorithm
+
+First, check the compression algorithm it currently uses:
+cat /sys/block/zram0/comp_algorithm
+
+You can change ZRAM’s compression algorithm:
+echo zstd > /sys/block/zram${DEVNUMBER}/comp_algorithm

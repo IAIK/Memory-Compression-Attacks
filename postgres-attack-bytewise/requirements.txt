@@ -1,0 +1,12 @@
+Click==7.0
+Flask==1.1.1
+matplotlib==3.1.2
+numpy==1.17.4
+pandas==1.4.4
+pandas_stubs==1.2.0.48
+psycopg2==2.9.3
+pyshark==0.4.3
+rdtsc==0.2.1
+requests==2.22.0
+seaborn==0.11.2
+tqdm==4.64.1
