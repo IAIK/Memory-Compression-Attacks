@@ -4,7 +4,7 @@ ZSTD_SRC := ../libraries/zstd-facebook
 FASTLZ_SRC := ../libraries/FastLZ
 LZO_SRC := ../libraries/lzo
 LZ4_SRC := ../libraries/lz4
-PGLZ_SRC := ../pglz-compression/pglz
+PGLZ_SRC := ../libraries/pglz
 
 CC ?= gcc
 CFLAGS += -fno-omit-frame-pointer
